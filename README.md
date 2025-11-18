@@ -1,2 +1,0 @@
-# MotionDetectionfor360Video
- 
