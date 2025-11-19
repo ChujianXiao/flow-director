@@ -8,16 +8,23 @@ if ~exist('frames', 'dir')
 end
 
 %Initialize optical flow objects
-frontFlow = opticalFlowFarneback;
-rightFlow = opticalFlowFarneback;
-backFlow = opticalFlowFarneback;
+topFlow = opticalFlowFarneback;
+bottomFlow = opticalFlowFarneback;
 leftFlow = opticalFlowFarneback;
+rightFlow = opticalFlowFarneback;
+frontFlow = opticalFlowFarneback;
+backFlow = opticalFlowFarneback;
+
 
 %Custom figure to view the flow vectors
 h = figure;
 movegui(h);
 hViewPanel = uipanel(h,'Position',[0 0 1 1],'Title','Plot of Optical Flow Vectors');
 hPlot = axes(hViewPanel);
+
+% initializing the max value
+max_motion = zeros(500, 500, 6);
+highest_vel = 0;
 
 while hasFrame(v)
     frame = readFrame(v);
