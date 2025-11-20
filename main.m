@@ -9,6 +9,8 @@ vertRes = video.Height/4; %Vertical Resolution of Mask
 dimPixelLife = uint8(video.FrameRate/2); %The duration the masks pixel stays on screen for
 currFrame = 1;
 threshold = 6; %Threshold for magnitude
+scale = 0.1; %Opacity scale
+maxPixelWeight = 255; %Maximum subtracted intensity of each magnitude
 
 %Initialize optical flow objects
 topFlow = opticalFlowFarneback;
@@ -56,15 +58,17 @@ while hasFrame(video)
     %Find the Highest value of all faces this frame
     highestMagnitude = max([toSubtractTop toSubtractBottom toSubtractLeft; ...
         toSubtractRight toSubtractFront toSubtractBack], [], "all");
+
+    Opacity = (1/scale) * highestMagnitude;
     
     %Bundle magnitudes into bins of frames according to dimPixelLife
     if currFrame <= dimPixelLife
-        Top(:,:,currFrame) = uint8((toSubtractTop/highestMagnitude)*255);
-        Bottom(:,:,currFrame) = uint8((toSubtractBottom/highestMagnitude)*255);
-        Left(:,:,currFrame) = uint8((toSubtractLeft/highestMagnitude)*255);
-        Right(:,:,currFrame) = uint8((toSubtractRight/highestMagnitude)*255);
-        Front(:,:,currFrame) = uint8((toSubtractFront/highestMagnitude)*255);
-        Back(:,:,currFrame) = uint8((toSubtractBack/highestMagnitude)*255);
+        Top(:,:,currFrame) = uint8((toSubtractTop/Opacity)*maxPixelWeight);
+        Bottom(:,:,currFrame) = uint8((toSubtractBottom/Opacity)*maxPixelWeight);
+        Left(:,:,currFrame) = uint8((toSubtractLeft/Opacity)*maxPixelWeight);
+        Right(:,:,currFrame) = uint8((toSubtractRight/Opacity)*maxPixelWeight);
+        Front(:,:,currFrame) = uint8((toSubtractFront/Opacity)*maxPixelWeight);
+        Back(:,:,currFrame) = uint8((toSubtractBack/Opacity)*maxPixelWeight);
     else
         Top = circshift(Top, [0 0 -1]);
         Bottom = circshift(Bottom, [0 0 -1]);
@@ -72,12 +76,12 @@ while hasFrame(video)
         Right = circshift(Right, [0 0 -1]);
         Front = circshift(Front, [0 0 -1]);
         Back = circshift(Back, [0 0 -1]);
-        Top(:,:,dimPixelLife) = uint8((toSubtractTop/highestMagnitude)*255);
-        Bottom(:,:,dimPixelLife) = uint8((toSubtractBottom/highestMagnitude)*255);
-        Left(:,:,dimPixelLife) = uint8((toSubtractLeft/highestMagnitude)*255);
-        Right(:,:,dimPixelLife) = uint8((toSubtractRight/highestMagnitude)*255);
-        Front(:,:,dimPixelLife) = uint8((toSubtractFront/highestMagnitude)*255);
-        Back(:,:,dimPixelLife) = uint8((toSubtractBack/highestMagnitude)*255);
+        Top(:,:,dimPixelLife) = uint8((toSubtractTop/Opacity)*maxPixelWeight);
+        Bottom(:,:,dimPixelLife) = uint8((toSubtractBottom/Opacity)*maxPixelWeight);
+        Left(:,:,dimPixelLife) = uint8((toSubtractLeft/Opacity)*maxPixelWeight);
+        Right(:,:,dimPixelLife) = uint8((toSubtractRight/Opacity)*maxPixelWeight);
+        Front(:,:,dimPixelLife) = uint8((toSubtractFront/Opacity)*maxPixelWeight);
+        Back(:,:,dimPixelLife) = uint8((toSubtractBack/Opacity)*maxPixelWeight);
     end
 
     %Sum the scaled magnitudes to achieve a gradual effect
