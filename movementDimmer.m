@@ -32,6 +32,9 @@ Back = zeros(vertRes, vertRes, dimPixelLife, "uint8");
 negDimMask = VideoWriter("negDimMask", "MPEG-4");
 negDimMask.FrameRate = video.FrameRate;
 
+%Initialize .csv cell
+magnitudePerFrame = {};
+
 open(negDimMask);
 while hasFrame(video)
     %Extract grayscale cubemap faces
@@ -60,6 +63,8 @@ while hasFrame(video)
         toSubtractRight toSubtractFront toSubtractBack], [], "all");
 
     Opacity = (1/scale) * highestMagnitude;
+
+    magnitudePerFrame = [magnitudePerFrame; highestMagnitude];
     
     %Bundle magnitudes into bins of frames according to dimPixelLife
     if currFrame <= dimPixelLife
@@ -98,6 +103,8 @@ while hasFrame(video)
     currFrame = currFrame + 1;
 end
 close(negDimMask);
+
+writecell(magnitudePerFrame,'magnitudePerFrame.csv');
 
 %% Apply the Mask
 clear
