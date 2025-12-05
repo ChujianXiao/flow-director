@@ -1,10 +1,9 @@
-
-MotionDetectionfor360Video
+Flow Director
 ==========
 
 This repository contains a set of MATLAB scripts that use optical flow to alleviate motion sickness when viewing equirectangular 360 degree videos.
 
-**Authors: ChujianXiao (mattcxiao@gmail.com), SemberStratos**
+**Authors: ChujianXiao(mattcxiao@gmail.com), SemberStratos**
 
 # Introduction
 
